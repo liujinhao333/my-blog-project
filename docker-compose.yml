@@ -1,0 +1,41 @@
+services:
+  backend:
+    build: ./backend
+    container_name: blog-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=myweb
+      - DB_USERNAME=root
+      - DB_PASSWORD=your_password
+      - JWT_SECRET=your_jwt_secret_key_here
+    volumes:
+      - uploads:/app/uploads
+    restart: unless-stopped
+    depends_on:
+      - mysql
+
+  frontend:
+    build: .
+    container_name: blog-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    container_name: blog-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=your_password
+      - MYSQL_DATABASE=myweb
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  uploads:
+  mysql_data:
